@@ -14,9 +14,9 @@ rules_haskell_dependencies()
 
 load("@rules_haskell//haskell:toolchain.bzl", "rules_haskell_toolchains")
 
-rules_haskell_toolchains(version = "9.4.7")
+load("@//:deps.bzl", "PACKAGES", "GHCOPTS")
 
-load("@//:deps.bzl", "PACKAGES")
+rules_haskell_toolchains(version = "9.4.7", ghcopts = GHCOPTS)
 
 load("@rules_haskell//haskell:cabal.bzl", "stack_snapshot")
 
