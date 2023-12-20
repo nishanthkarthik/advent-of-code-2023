@@ -27,4 +27,4 @@ haskell_library(
     deps = STACKAGE_DEPS,
 )
 
-[aoc(day + 1) for day in range(3)]
+[aoc(day + 1) for day in range(4)]
