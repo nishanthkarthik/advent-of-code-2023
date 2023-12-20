@@ -1,8 +1,6 @@
-load("@//:deps.bzl", "PACKAGES")
+load("@//:deps.bzl", "STACKAGE_DEPS", "aoc")
 
-load("@rules_haskell//haskell:defs.bzl", "haskell_binary", "haskell_repl")
-
-STACKAGE_DEPS = ["@stackage//{}".format(it) for it in PACKAGES]
+load("@rules_haskell//haskell:defs.bzl", "haskell_binary", "haskell_repl", "haskell_library")
 
 haskell_binary(
     name = "main",
@@ -16,10 +14,17 @@ haskell_repl(
     deps = STACKAGE_DEPS,
 )
 
-
 load("@rules_rust//rust:defs.bzl", "rust_binary")
 
 rust_binary(
     name = "main-rs",
     srcs = ["main.rs"],
 )
+
+haskell_library(
+    name = "aoclib",
+    srcs = ["AocLib.hs"],
+    deps = STACKAGE_DEPS,
+)
+
+[aoc(day + 1) for day in range(1)]
