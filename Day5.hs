@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TupleSections #-}
 
 import qualified Data.Attoparsec.Text as At
 import qualified Data.Attoparsec.Combinator as Atc

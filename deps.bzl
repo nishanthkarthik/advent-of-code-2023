@@ -5,7 +5,9 @@ PACKAGES = ["array", "base", "text", "containers", "split", "parallel", "extra",
 
 STACKAGE_DEPS = ["@stackage//{}".format(it) for it in PACKAGES]
 
-GHCOPTS = ["-threaded", "-rtsopts", "-O2"]
+EXTENSIONS = ["-XOverloadedStrings", "-XTupleSections"]
+
+GHCOPTS = ["-threaded", "-rtsopts", "-O2"] + EXTENSIONS
 
 def aoc(day):
     haskell_binary(
@@ -13,4 +15,5 @@ def aoc(day):
         srcs = ["Day{}.hs".format(day)],
         deps = ["@//:aoclib"] + STACKAGE_DEPS,
         data = native.glob(["{}/*.txt".format(day)]),
+        ghcopts = GHCOPTS,
     )
