@@ -1,0 +1,49 @@
+???.### 1,1,3
+??.### 0,1,3
+?.### 1,3
+.### 0,3
+### 3
+SAT
+
+???.### 1,1,3
+??.### 1,1,3
+?.### 0,1,3
+.### 1,3
+### 1,3
+UNSAT
+
+##?...##.. 3,2
+#?...##.. 2,2
+?...##.. 1,2
+
+    ...##.. 2
+    ##.. 2
+    #.. 1
+    .. 0
+    SAT
+
+    ...##.. 1,2
+    ##.. 1,2
+    #.. 0,2
+    UNSAT
+
+---
+
+-- pad the front and rear with dots
+
+n = 0 : ns
+
+#:xs -> UNSAT
+.:xs -> f ns xs (prev is .)
+?:xs -> f ns xs (? => .) (prev is .)
+
+n > 0 : ns
+#:xs -> f n-1:ns xs (prev is #)
+
+    prev is .
+        .:xs -> f n:ns xs (skip the dot) (prev is .)
+        ?:xs -> f n-1:ns xs (? => #) (prev is #) [] f n:ns xs (? => .) (prev is .)
+
+    prev is #
+        .:xs -> UNSAT (terminated before completion)
+        ?:xs -> f n-1:ns xs (? => #) (prev is #)
