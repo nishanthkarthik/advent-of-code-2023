@@ -16,7 +16,7 @@ def aoc(day):
         deps = ["@//:aoclib"] + STACKAGE_DEPS,
         data = native.glob(["{}/*.txt".format(day)]),
         ghcopts = select({
-            "//:profiling": GHCOPTS + ["-prof", "-fprof-auto"],
+            "//:profiling": GHCOPTS + ["-prof", "-fprof-late"],
             "//conditions:default": GHCOPTS,
         })
     )
