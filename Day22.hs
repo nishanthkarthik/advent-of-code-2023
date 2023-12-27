@@ -15,8 +15,7 @@ import Data.Function
 import Data.Bifunctor
 import Data.Containers.ListUtils (nubOrd)
 import Text.Printf (printf)
-
-import Debug.Trace
+import Control.Parallel.Strategies
 
 type Idx = (Int,Int,Int)
 
@@ -55,8 +54,8 @@ settle cubes = go cubes []
             where decz z = add (0,0,negate z)
                   dists = map (\bl -> mapMaybe (fallBlockOnCube bl) settled) $ lowerPlane this
                   fallDelta
-                      | all null dists = let ((_,_,z1),(_,_,z2)) = this in min z1 z2 - 1
-                      | otherwise = minimum $ concat dists
+                      | (not . all null) dists = minimum $ concat dists
+                      | otherwise = let ((_,_,z1),(_,_,z2)) = this in min z1 z2 - 1
                   offsetByDelta = bimap (decz fallDelta) (decz fallDelta)
 
 bfs :: M.Map Cube (S.Set Cube) -> M.Map Cube (S.Set Cube) -> Cube -> Int
@@ -77,10 +76,9 @@ bfs supportedBy supports start = run (S.singleton start) (Seq.fromList $ S.toLis
 main :: IO ()
 main = do
     cubes <- parseInput parser
-    let settleFn = iterate (settle . sortCubesByZ) cubes
-        sortCubesByZ = sortOn (\((_,_,z1),(_,_,z2)) -> (min z1 z2, max z1 z2))
-        settled = settleFn !! 20
-        supports = map (supportsOf settled) settled
+    let sortCubesByZ = sortOn (\((_,_,z1),(_,_,z2)) -> (min z1 z2, max z1 z2))
+        settled = settle $ sortCubesByZ cubes
+        supports = parMap rpar (supportsOf settled) settled
     let standaloneSupports = foldr S.union S.empty $ filter ((== 1) . S.size) supports
         solve1 = length supports - S.size standaloneSupports
     print solve1
@@ -90,7 +88,7 @@ main = do
         supportedByMap = M.fromList $ zip settled supports
         start = last settled
         n = length settled
-        dfsSizes = map (bfs supportedByMap supportMap) $ S.toList standaloneSupports
+        dfsSizes = parMap rpar (bfs supportedByMap supportMap) $ S.toList standaloneSupports
         solve2 = dfsSizes
     -- print solve2
     print $ sum solve2
