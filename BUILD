@@ -27,7 +27,7 @@ haskell_library(
     deps = STACKAGE_DEPS,
 )
 
-[aoc(day + 1) for day in range(22)]
+[aoc(day + 1) for day in range(23)]
 
 config_setting(
     name = "profiling",
