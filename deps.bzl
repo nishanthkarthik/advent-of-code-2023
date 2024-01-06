@@ -1,5 +1,7 @@
 load("@rules_haskell//haskell:defs.bzl", "haskell_binary")
 
+load("@rules_rust//rust:defs.bzl", "rust_binary")
+
 PACKAGES = ["array", "base", "text", "containers", "split", "parallel", "extra", "directory", "unix",
             "attoparsec", "random"]
 
@@ -19,4 +21,11 @@ def aoc(day):
             "//:profiling": GHCOPTS + ["-prof", "-fprof-late"],
             "//conditions:default": GHCOPTS,
         })
+    )
+
+    rust_binary(
+        name = "r{}".format(day),
+        srcs = ["day_{}.rs".format(day)],
+        deps = ["@crate_index//:nom", "@//:aoclib-rs"],
+        data = native.glob(["{}/*.txt".format(day)]),
     )

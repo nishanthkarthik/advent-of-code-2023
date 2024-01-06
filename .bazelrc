@@ -1,1 +1,2 @@
-common --@rules_rust//rust/toolchain/channel=nightly
+common --enable_bzlmod=false
+build --incompatible_enable_cc_toolchain_resolution
