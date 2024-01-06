@@ -20,16 +20,18 @@ fn many_digits(i: &str) -> Parsed<Vec<u32>> {
     multi::many1(filter_digit)(i)
 }
 
-fn parse1_line(i: &str) -> Parsed<Vec<Vec<u32>>> {
+fn parse1(i: &str) -> Parsed<Vec<u32>> {
     multi::separated_list1(multi::many1(branch::alt((character::complete::newline,
                                                      character::complete::satisfy(|c| c.is_alphabetic())))),
-                           many_digits)(i)
+                           combinator::map(many_digits, solve1))(i)
 }
 
-fn solve1(result: Vec<Vec<u32>>) -> u32 {
-    result.into_iter()
-        .filter(|v| !v.is_empty())
-        .map(|a| 10 * a.first().unwrap() + a.last().unwrap()).sum()
+fn solve1(result: Vec<u32>) -> u32 {
+    if result.is_empty() { 0 } else { 10 * result.first().unwrap() + result.last().unwrap() }
+}
+
+fn solve2(result: Vec<u32>) -> u32 {
+    if result.is_empty() { 0 } else { 10 * result.last().unwrap() + result.first().unwrap() }
 }
 
 fn parse_text_num(i: &str) -> Parsed<u32> {
@@ -63,22 +65,19 @@ fn parse2_line(i: &str) -> Parsed<Vec<u32>> {
     }
 }
 
-fn parse2(i: &str) -> Parsed<Vec<Vec<u32>>> {
+fn parse2(i: &str) -> Parsed<Vec<u32>> {
     fn sep(j: &str) -> Parsed<char> {
         let (j, _) = bytes::complete::take_while(|c: char| !c.is_ascii_whitespace())(j)?;
         character::complete::newline(j)
     }
 
-    multi::separated_list1(sep, combinator::map(parse2_line, |mut v| {
-        v.reverse();
-        v
-    }))(i)
+    multi::separated_list1(sep, combinator::map(parse2_line, solve2))(i)
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let in1 = aoclib_rs::aoc::parse_input(parse1_line)?;
-    println!("{}", solve1(in1));
+    let in1 = aoclib_rs::aoc::parse_input(parse1)?;
+    println!("{}", in1.iter().sum::<u32>());
     let in2 = aoclib_rs::aoc::parse_input(parse2)?;
-    println!("{:?}", solve1(in2));
+    println!("{}", in2.iter().sum::<u32>());
     Ok(())
 }
