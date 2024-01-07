@@ -8,8 +8,11 @@ nom = "7.1.3"
 
 [[bin]]
 name = "day"
-path = "day_2.rs"
+path = "day_3.rs"
 
 [lib]
 name = "aoclib_rs"
 path = "aoc.rs"
+
+[profile.release]
+debug = 1
